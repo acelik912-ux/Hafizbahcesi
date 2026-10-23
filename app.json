@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Hafız Bahçesi",
+    "slug": "hafizbahcesi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": { "package": "com.hafizbahcesi.app" },
+    "ios": { "bundleIdentifier": "com.hafizbahcesi.app" }
+  }
+}
