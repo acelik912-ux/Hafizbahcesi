@@ -55,6 +55,7 @@ function WorldTree({ t, onPress }) {
   });
   return (
     <Pressable ref={ref} onPress={onPress} style={{ position: 'absolute', left: 0, top: 0, width: BW, height: BH, opacity: 0 }}>
+      <View pointerEvents="none" style={{ position: 'absolute', left: BW * 0.1, width: BW * 0.8, bottom: -BH * 0.025, height: BH * 0.07, borderRadius: BH, backgroundColor: 'rgba(10,20,5,0.32)' }} />
       <Image source={TREE_IMG[t.n]} style={{ width: BW, height: BH }} resizeMode="contain" />
     </Pressable>
   );
@@ -168,6 +169,11 @@ export default function App() {
     else gotoFruit(tree, k + 1, 2400);
   };
   const tapFruit = (i) => { if (mode === 'tree') { setPicked(i); gotoFruit(tree, i, 2600); } };
+  const STEP = 6.5;                       // iki ağaç arası mesafe
+  const step = (dir) => {                 // ilerle / geri: bir adım yürü
+    if (mode !== 'garden') return;
+    flyTo({ x: 0, y: 1.6, z: Math.max(0, Math.min(Z_MAX, cam.z + dir * STEP)) }, 1800);
+  };
   function leave() {
     const t = tree; setMode('garden'); setPicked(0);
     flyTo({ x: 0, y: 1.6, z: Math.max(0, (t ? t.z : 6) - 6) }, 2600);
@@ -194,6 +200,10 @@ export default function App() {
               <Pressable key={t.n} style={S.chip} onPress={() => walkTo(t)}><Text style={S.chipTx}>{t.n} · {t.name}</Text></Pressable>
             ))}
           </ScrollView>
+          <View style={S.walk}>
+            <Pressable style={S.walkB} onPress={() => step(-1)}><Text style={S.walkTx}>▼ Geri</Text></Pressable>
+            <Pressable style={[S.walkB, S.walkMain]} onPress={() => step(1)}><Text style={[S.walkTx, { fontSize: 19 }]}>İlerle ▲</Text></Pressable>
+          </View>
           <Text style={S.hint}>Yürümek için yukarı kaydır · ağaca dokun</Text>
         </>
       )}
@@ -238,6 +248,10 @@ const S = StyleSheet.create({
   chips: { position: 'absolute', bottom: 54, left: 0, right: 0, zIndex: 20, maxHeight: 46 },
   chip: { backgroundColor: 'rgba(255,246,217,.92)', borderColor: '#D4AF37', borderWidth: 2, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 8, marginRight: 8 },
   chipTx: { fontWeight: '700', color: '#222' },
+  walk: { position: 'absolute', bottom: 108, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 12, zIndex: 25 },
+  walkB: { backgroundColor: 'rgba(0,0,0,.6)', borderColor: '#F2C94C', borderWidth: 2, borderRadius: 18, paddingHorizontal: 20, paddingVertical: 12 },
+  walkMain: { backgroundColor: '#0B0B0B', paddingHorizontal: 36 },
+  walkTx: { color: '#F2C94C', fontWeight: '800', fontSize: 16 },
   hint: { position: 'absolute', bottom: 18, alignSelf: 'center', color: '#ddd', fontSize: 13, zIndex: 20 },
   label: { position: 'absolute', left: 0, top: 0, width: 160, alignItems: 'center', backgroundColor: 'rgba(255,246,217,.94)', borderColor: '#D4AF37', borderWidth: 2, borderRadius: 10, padding: 4 },
   labelTx: { fontWeight: '800', fontSize: 14, color: '#222' },
